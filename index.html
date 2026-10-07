@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101511">
+  <meta name="description" content="Prepare a clean, privacy-first bug report from game and mod logs. Everything stays in your browser.">
+  <title>BugBundle — Share the signal, not your secrets</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="BugBundle home"><span class="brand-mark">B<span>+</span></span><span>bugbundle<span class="brand-dot">.</span></span></a>
+    <nav aria-label="Main navigation"><a href="#how">How it works</a><a href="#privacy">Privacy</a><a class="repo-link" href="https://github.com/GhosTnever-lkm/bugbundle" target="_blank" rel="noreferrer">GitHub ↗</a></nav>
+    <button class="language" id="languageToggle" type="button" aria-label="Switch language">RU <span>⌄</span></button>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span><span data-i18n="eyebrow">LOCAL-FIRST · BUILT FOR PLAYERS</span></div>
+        <h1 data-i18n="heroTitle">Make your crash<br>report <em>actually useful.</em></h1>
+        <p class="hero-lede" data-i18n="heroLede">Collect the right logs, versions and steps into one clear report. Keep the private stuff on your device.</p>
+        <div class="hero-points"><span><b>01</b> <span data-i18n="pointOne">Add logs</span></span><span><b>02</b> <span data-i18n="pointTwo">Review redactions</span></span><span><b>03</b> <span data-i18n="pointThree">Share a tidy bundle</span></span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-grid"></div><div class="art-file"><div class="file-top"><span></span><span></span><span></span><b>crash.log</b></div><div class="file-lines"><i></i><i></i><i></i><i></i></div><div class="file-scan">SCANNING LOCALLY</div></div><div class="art-shield">✓</div><div class="art-caption">YOUR LOGS STAY HERE</div></div>
+    </section>
+
+    <section class="workspace wrap" aria-label="Report builder">
+      <div class="workspace-heading"><div><div class="section-kicker" data-i18n="builderKicker">REPORT BUILDER</div><h2 data-i18n="builderTitle">Put the puzzle together.</h2></div><button class="ghost-button" id="loadDemo" type="button"><span>✳</span> <span data-i18n="tryDemo">Try an example</span></button></div>
+      <div class="builder-grid">
+        <section class="panel input-panel">
+          <div class="panel-head"><span class="step-number">01</span><div><h3 data-i18n="detailsHeading">Issue details</h3><p data-i18n="detailsSub">A little context goes a long way.</p></div></div>
+          <div class="form-grid">
+            <label class="field full"><span data-i18n="titleLabel">Short title</span><input id="title" maxlength="120" placeholder="e.g. Game closes after loading a save"></label>
+            <label class="field"><span data-i18n="gameLabel">Game</span><select id="game"><option value="auto">Auto-detect from logs</option><option>Minecraft</option><option>Hearts of Iron IV</option><option>Stellaris</option><option>Skyrim / Bethesda</option><option>Unity game</option><option>Unreal Engine game</option><option>Other</option></select></label>
+            <label class="field"><span data-i18n="platformLabel">Platform</span><select id="platform"><option value="">Select platform</option><option>Windows</option><option>macOS</option><option>Linux</option><option>Steam Deck</option><option>Other</option></select></label>
+            <label class="field"><span data-i18n="versionLabel">Game version</span><input id="gameVersion" maxlength="100" placeholder="Auto-detected where possible"></label>
+            <label class="field"><span data-i18n="loaderLabel">Loader / runtime</span><input id="loader" maxlength="120" placeholder="Fabric, Forge, Java 21…"></label>
+            <label class="field full"><span data-i18n="expectedLabel">What did you expect?</span><textarea id="expected" rows="2" maxlength="1000" placeholder="What should have happened?"></textarea></label>
+            <label class="field full"><span data-i18n="happenedLabel">What happened instead?</span><textarea id="happened" rows="2" maxlength="1000" placeholder="What did you see?"></textarea></label>
+            <label class="field full"><span data-i18n="stepsLabel">Steps to reproduce</span><textarea id="steps" rows="2" maxlength="1500" placeholder="1. Load the save  2. Open the map  3. …"></textarea></label>
+            <label class="field full"><span data-i18n="modsLabel">Mods / load order <small>optional</small></span><textarea id="mods" rows="3" maxlength="12000" placeholder="Paste the mod list or load order"></textarea></label>
+          </div>
+          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Choose log files">
+            <input id="fileInput" type="file" multiple accept=".log,.txt,.crash,.json,.yaml,.yml,.md,.xml,.ini,.cfg,.csv,.trace,.stacktrace,.out,.err" hidden>
+            <div class="drop-icon">↥</div><div class="drop-copy"><strong data-i18n="dropTitle">Drop logs here, or <u>browse files</u></strong><span data-i18n="dropSub">Crash logs, latest.log, Player.log, error.log, mod lists · up to 25 MB total</span></div><span class="plus">+</span>
+          </div>
+          <div class="file-list" id="fileList" aria-live="polite"></div>
+          <div class="notice"><span class="notice-icon">✳</span><span data-i18n="localNotice">Files are read and cleaned in this browser. Nothing is uploaded.</span></div>
+        </section>
+
+        <aside class="panel preview-panel">
+          <div class="panel-head"><span class="step-number">02</span><div><h3 data-i18n="previewHeading">Review & export</h3><p data-i18n="previewSub">Check the cleaned files before sharing.</p></div><span class="live-dot" title="Live preview"></span></div>
+          <div class="preview-status" id="previewStatus"><span class="status-icon">◎</span><div><b data-i18n="emptyStateTitle">Ready when you are</b><p data-i18n="emptyStateBody">Add a log or try the example to build your report.</p></div></div>
+          <div class="report-summary" id="reportSummary" hidden>
+            <div class="summary-top"><span class="detected-label" id="detectedGame">GAME</span><span class="file-count" id="fileCount">0 FILES</span></div>
+            <h4 id="summaryTitle">Report preview</h4>
+            <div class="summary-meta" id="summaryMeta"></div>
+            <div class="hint-list" id="hintList"></div>
+            <div class="redaction-box"><div class="redaction-head"><span>✳ <span data-i18n="redactionTitle">Privacy scan</span></span><b id="redactionCount">0</b></div><p id="redactionText" data-i18n="redactionEmpty">Add logs to see what will be masked.</p></div>
+            <details class="sanitized-details"><summary><span data-i18n="sanitizedPreview">Preview cleaned log text</span><span>⌄</span></summary><pre id="sanitizedPreview"></pre></details>
+          </div>
+          <div class="export-area"><button class="export-button" id="exportZip" type="button" disabled><span>↓</span> <span data-i18n="downloadBundle">Download bug bundle</span><span class="button-arrow">↗</span></button><button class="markdown-button" id="exportMarkdown" type="button" disabled><span data-i18n="markdownOnly">Markdown report only</span> <span>↗</span></button><p data-i18n="exportFootnote">ZIP includes the report and cleaned log copies. Review everything before posting.</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="how wrap" id="how"><div class="section-kicker" data-i18n="howKicker">LESS BACK-AND-FORTH</div><h2 data-i18n="howTitle">Give helpers the clues<br>they need on the first try.</h2><div class="how-grid"><article><span>01</span><h3 data-i18n="how1Title">Gather the evidence</h3><p data-i18n="how1Body">Add the crash log, error log and mod list. BugBundle spots common game and loader details.</p></article><article><span>02</span><h3 data-i18n="how2Title">Clean it up</h3><p data-i18n="how2Body">Secrets, email addresses and personal user-folder paths are masked locally. You can preview the result.</p></article><article><span>03</span><h3 data-i18n="how3Title">Share one bundle</h3><p data-i18n="how3Body">Export a readable issue report with the cleaned files attached, ready for a forum or issue tracker.</p></article></div></section>
+
+    <section class="privacy-band" id="privacy"><div class="wrap privacy-inner"><div class="privacy-symbol">⌑</div><div><div class="section-kicker" data-i18n="privacyKicker">YOUR DATA, YOUR DEVICE</div><h2 data-i18n="privacyTitle">Private by design.<br>Clear about its limits.</h2><p data-i18n="privacyBody">BugBundle processes files in your browser. It does not upload logs or diagnose the true root cause. Its hints are only starting points; inspect the sanitized bundle before sharing.</p></div><div class="privacy-checks"><span>✓ <span data-i18n="privacyCheck1">No upload or account</span></span><span>✓ <span data-i18n="privacyCheck2">No API key required</span></span><span>✓ <span data-i18n="privacyCheck3">You control every export</span></span></div></div></section>
+  </main>
+  <footer class="wrap footer"><a class="brand" href="#top"><span class="brand-mark">B<span>+</span></span><span>bugbundle<span class="brand-dot">.</span></span></a><span data-i18n="footerText">Made for better bug reports. All processing stays in your browser.</span><a href="https://github.com/GhosTnever-lkm/bugbundle" target="_blank" rel="noreferrer">Open source · MIT ↗</a></footer>
+</body>
+</html>
