@@ -6,7 +6,9 @@
 
 ## Open the app
 
-Open `index.html` in a recent browser, or serve this directory with any static web server. There is no build step, package install, server API, or account. The example works without selecting a file.
+**Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
+
+Or open `index.html` in a recent browser, or serve this directory with any static web server. There is no build step, package install, server API, or account. The example works without selecting a file.
 
 ## What it does
 
