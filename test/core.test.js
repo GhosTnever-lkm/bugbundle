@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import { inflateRawSync } from 'node:zlib';
 import { buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, suggestChecks } from '../src/core.js';
 
+function detectGameFromFiles(files) {
+  return detectGame(files.map(file => ({ name: file.name, text: file.text })));
+}
+
 test('redacts common credentials, emails, and user profile paths', () => {
   const input = 'password=superSecret123\nuser=C:\\Users\\Alice\\Saves\ncontact alice@example.com\nAuthorization: Bearer abcdefghijklmnopqrstuvwxyz';
   const result = redact(input);
@@ -32,6 +36,13 @@ test('detects known game types and returns other for unrelated text', () => {
   assert.equal(detectGame([{ name: 'latest.log', text: 'net.minecraft.client.main.Main' }]), 'minecraft');
   assert.equal(detectGame([{ name: 'hoi4_2026_10_08.log', text: 'script error' }]), 'hoi4');
   assert.equal(detectGame([{ name: 'output_log.txt', text: 'ordinary application output' }]), 'other');
+});
+
+test('the demo report file uses the same text field as uploaded files', () => {
+  const demo = { name: 'crash-report.txt', text: 'Minecraft Crash Report\nMinecraft Version: 1.20.1' };
+  assert.equal(detectGameFromFiles([demo]), 'minecraft');
+  assert.ok(extractVersions(demo.text).some(item => item.label === 'Minecraft' && item.value === '1.20.1'));
+  assert.match(buildReport({ title: 'Demo' }, [demo], { gameLabel: 'Minecraft', versions: [], evidence: [], loader: '' }), /Files included:\*\* 1/);
 });
 
 test('extracts versions, unique error evidence, and heuristic checks', () => {
