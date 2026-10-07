@@ -8,6 +8,8 @@
 
 **Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
 
+**Download for offline use:** [BugBundle v1.0.0 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/latest/download/BugBundle-v1.0.0.zip). Extract it and open `index.html`.
+
 ![CI](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml/badge.svg)
 
 Or open `index.html` in a recent browser, or serve this directory with any static web server. There is no build step, package install, server API, or account. The example works without selecting a file.
