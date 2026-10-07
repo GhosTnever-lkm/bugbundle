@@ -1,0 +1,10 @@
+{
+  "name": "bugbundle",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first game and mod crash report builder",
+  "scripts": {
+    "test": "node --test"
+  }
+}

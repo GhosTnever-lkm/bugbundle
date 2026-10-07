@@ -8,6 +8,8 @@
 
 **Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
 
+![CI](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml/badge.svg)
+
 Or open `index.html` in a recent browser, or serve this directory with any static web server. There is no build step, package install, server API, or account. The example works without selecting a file.
 
 ## What it does
@@ -28,7 +30,7 @@ Redaction is pattern-based and cannot guarantee that all sensitive information i
 
 ## Development
 
-The app uses native browser JavaScript modules and has no dependencies. Serve the folder locally, edit `index.html`, `styles.css`, or `src/`, and reload the page.
+The app uses native browser JavaScript modules and has no runtime dependencies. Core tests use Node.js's built-in test runner: run `npm test`. Serve the folder locally, edit `index.html`, `styles.css`, or `src/`, and reload the page. GitHub Actions runs the core tests for pushes and pull requests.
 
 ## Локальный запуск
 

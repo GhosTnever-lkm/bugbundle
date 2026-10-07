@@ -166,9 +166,14 @@ export function createZip(entries) {
   const locals = [];
   const central = [];
   let offset = 0;
+  let totalSize = 0;
   for (const entry of entries) {
     const name = encoder.encode(safeFilename(entry.name));
+    if (name.length > 0xffff) throw new Error('A ZIP filename is too long.');
     const data = entry.data instanceof Uint8Array ? entry.data : encoder.encode(String(entry.data));
+    if (data.length > 0xffffffff) throw new Error('A ZIP entry is too large for ZIP32.');
+    totalSize += data.length;
+    if (totalSize > 0xffffffff) throw new Error('The ZIP bundle is too large for ZIP32.');
     const crc = crc32(data);
     const local = new Uint8Array(30 + name.length + data.length);
     const lv = new DataView(local.buffer);
@@ -182,8 +187,10 @@ export function createZip(entries) {
     write16(cv, 12, 0); write16(cv, 14, 0x21); write32(cv, 16, crc); write32(cv, 20, data.length); write32(cv, 24, data.length);
     write16(cv, 28, name.length); write16(cv, 30, 0); write16(cv, 32, 0); write16(cv, 34, 0); write16(cv, 36, 0); write32(cv, 38, 0); write32(cv, 42, offset);
     cd.set(name, 46); central.push(cd); offset += local.length;
+    if (offset > 0xffffffff) throw new Error('The ZIP bundle is too large for ZIP32.');
   }
   const centralSize = central.reduce((sum, item) => sum + item.length, 0);
+  if (centralSize > 0xffffffff || offset + centralSize > 0xffffffff) throw new Error('The ZIP bundle is too large for ZIP32.');
   const end = new Uint8Array(22);
   const ev = new DataView(end.buffer);
   write32(ev, 0, 0x06054b50); write16(ev, 4, 0); write16(ev, 6, 0); write16(ev, 8, entries.length); write16(ev, 10, entries.length);
