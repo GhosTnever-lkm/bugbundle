@@ -8,7 +8,7 @@
 
 **Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
 
-**Download for offline use:** [BugBundle v1.0.0 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/latest/download/BugBundle-v1.0.0.zip). Extract it and open `index.html`.
+**Download for offline use:** [BugBundle v1.0.1 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.1/BugBundle-v1.0.1.zip). Extract it and open `index.html`.
 
 ![CI](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml/badge.svg)
 
