@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { inflateRawSync } from 'node:zlib';
-import { buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, suggestChecks } from '../src/core.js';
+import { buildIssuePack, buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, suggestChecks } from '../src/core.js';
 
 function detectGameFromFiles(files) {
   return detectGame(files.map(file => ({ name: file.name, text: file.text })));
@@ -15,6 +15,17 @@ test('redacts common credentials, emails, and user profile paths', () => {
   assert.equal(result.counts['Windows user path'], 1);
   assert.equal(result.counts['Email address'], 1);
   assert.equal(result.counts['Authorization token'], 1);
+});
+
+test('redacts webhook URLs and JSON-style apiKey assignments', () => {
+  const input = [
+    'https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopQRSTUVwx',
+    '{"apiKey": "json-secret-value-123", "access_token": bare-secret-token-123}',
+  ].join('\n');
+  const result = redact(input);
+  assert.doesNotMatch(result.text, /discord\.com|abcdefghijklmnop|json-secret|bare-secret/);
+  assert.equal(result.counts['Discord webhook'], 1);
+  assert.equal(result.counts['Credential assignment'], 2);
 });
 
 test('redacts a private key as one block', () => {
@@ -73,6 +84,19 @@ test('report redacts user fields and prevents Markdown structure injection', () 
   assert.match(report, /Issue \\| &lt;script&gt;/);
   assert.doesNotMatch(report, /<script>/, 'raw HTML tags must not reach the report');
   assert.match(report, /Not provided/);
+});
+
+test('issue pack includes privacy-clean project context and optional clean logs', () => {
+  const entries = buildIssuePack({
+    report: '# Clean report',
+    project: { name: 'Mod', url: 'https://example.test/mod', version: '1.2.3', platform: 'C:\\Users\\Alice\\PC' },
+    files: [{ name: '../../C:\\Users\\Alice\\latest.log', cleaned: 'password=[REDACTED]' }],
+  });
+  assert.deepEqual(entries.map(entry => entry.name), ['bug-report.md', 'project-context.json', 'logs/latest.log']);
+  assert.doesNotMatch(entries[1].data, /Alice/);
+  assert.equal(JSON.parse(entries[1].data).url, 'https://example.test/mod');
+  assert.deepEqual(buildIssuePack({ report: '# Clean report', files: [{ name: 'log.txt', cleaned: 'x' }], includeCleanLogs: false }).map(entry => entry.name), ['bug-report.md']);
+  assert.throws(() => buildIssuePack({ report: '' }), /non-empty report/);
 });
 
 test('ZIP output contains safe filenames and readable entries', async () => {

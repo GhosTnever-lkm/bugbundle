@@ -4,9 +4,10 @@ const RULES = [
   ['AWS access key', /\bAKIA[0-9A-Z]{16}\b/g],
   ['Google API key', /\bAIza[0-9A-Za-z_-]{30,}\b/g],
   ['Slack token', /\bxox[baprs]-[0-9A-Za-z-]{20,}\b/g],
+  ['Discord webhook', /https?:\/\/(?:discord(?:app)?\.com)\/api\/webhooks\/\d{17,20}\/[A-Za-z0-9._-]{20,}/gi],
   ['Stripe secret key', /\bsk_(?:live|test)_[0-9A-Za-z]{20,}\b/g],
-  ['Authorization token', /((?:authorization\s*:\s*)?bearer\s+)[A-Za-z0-9._~+/-]{16,}={0,2}/gi],
-  ['Credential assignment', /\b(password|passwd|api[_-]?key|access[_-]?token|client[_-]?secret|aws_secret_access_key)\s*([:=])\s*(?:"[^"]*"|'[^']*'|[^\s,;]+)/gi],
+  ['Authorization token', /((?:authorization\s*:\s*)?bearer\s+)[A-Za-z0-9._~+/-]{12,}={0,2}/gi],
+  ['Credential assignment', /["']?\b(password|passwd|api[_-]?key|access[_-]?token|client[_-]?secret|aws_secret_access_key|secret|token)\b["']?\s*([:=])\s*(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s,;"'`]+)/gi],
 ];
 
 export const GAMES = [
@@ -52,9 +53,9 @@ export function redact(text, options = {}) {
 
   countReplace(RULES[0][0], RULES[0][1], () => '[PRIVATE KEY REDACTED]');
   for (const [name, pattern] of RULES.slice(1, 7)) {
-    countReplace(name, pattern, match => name === 'Authorization token' ? `${match[1]}[REDACTED]` : '[REDACTED]');
+    countReplace(name, pattern, (...args) => name === 'Authorization token' ? `${args[1]}[REDACTED]` : '[REDACTED]');
   }
-  countReplace(RULES[7][0], RULES[7][1], match => `${match[1]}${match[2]}[REDACTED]`);
+  countReplace(RULES[7][0], RULES[7][1], (...args) => `${args[1]}${args[2]}[REDACTED]`);
 
   if (options.paths !== false) {
     countReplace('Windows user path', /([A-Za-z]:\\Users\\)[^\\/\s"']+/gi, () => '[USER]');
@@ -68,6 +69,9 @@ export function redact(text, options = {}) {
     const octet = '(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)';
     countReplace('IPv4 address', new RegExp(`\\b${octet}(?:\\.${octet}){3}\\b`, 'g'), () => '[IP ADDRESS]');
   }
+  countReplace('Credential assignment', /["']?\b(password|passwd|api[_-]?key|access[_-]?token|client[_-]?secret|aws_secret_access_key|secret|token)\b["']?\s*([:=])\s*(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s,;"'`]+)/gi,
+    (...args) => `${args[1]}${args[2]}[REDACTED]`);
+  countReplace('Discord webhook', /https?:\/\/(?:discord(?:app)?\.com)\/api\/webhooks\/\d{17,20}\/[A-Za-z0-9._-]{20,}/gi, () => '[REDACTED WEBHOOK]');
   return { text: output, counts };
 }
 
@@ -140,6 +144,28 @@ export function buildReport(data, files, details) {
   else for (const item of details.evidence) lines.push(`- \`${escapeMd(item.file)}:${item.line}\` — ${escapeMd(clean(item.text))}`);
   lines.push('', '## Privacy', '', 'This bundle was assembled in the browser. Secret-like values, selected personal paths, and selected contact details were masked before export. Review the attached sanitized logs before sharing.', '');
   return lines.join('\n');
+}
+
+export function buildIssuePack({ report, files = [], project = {}, includeCleanLogs = true }) {
+  const text = typeof report === 'string' ? report : String(report?.reportText ?? '');
+  if (!text.trim()) throw new Error('A non-empty report is required.');
+  const entries = [{ name: 'bug-report.md', data: text }];
+  if (project && (project.name || project.url || project.version || project.platform)) {
+    const safeProject = {
+      name: redact(String(project.name || '')).text.slice(0, 120),
+      url: String(project.url || '').slice(0, 500),
+      version: redact(String(project.version || '')).text.slice(0, 100),
+      platform: redact(String(project.platform || '')).text.slice(0, 80),
+    };
+    entries.push({ name: 'project-context.json', data: JSON.stringify(safeProject, null, 2) });
+  }
+  if (includeCleanLogs) {
+    for (const file of files) {
+      if (!file || typeof file.name !== 'string' || typeof file.cleaned !== 'string') continue;
+      entries.push({ name: `logs/${safeFilename(file.name)}`, data: file.cleaned });
+    }
+  }
+  return entries;
 }
 
 const CRC_TABLE = (() => {

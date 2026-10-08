@@ -8,7 +8,7 @@
   <title>BugBundle — Share the signal, not your secrets</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
-  <script type="module" src="src/app.js?v=2"></script>
+  <script type="module" src="src/app.js?v=3"></script>
 </head>
 <body>
   <header class="topbar">
@@ -43,6 +43,7 @@
             <label class="field full"><span data-i18n="happenedLabel">What happened instead?</span><textarea id="happened" rows="2" maxlength="1000" placeholder="What did you see?"></textarea></label>
             <label class="field full"><span data-i18n="stepsLabel">Steps to reproduce</span><textarea id="steps" rows="2" maxlength="1500" placeholder="1. Load the save  2. Open the map  3. …"></textarea></label>
             <label class="field full"><span data-i18n="modsLabel">Mods / load order <small>optional</small></span><textarea id="mods" rows="3" maxlength="12000" placeholder="Paste the mod list or load order"></textarea></label>
+            <label class="field full"><span data-i18n="projectUrlLabel">Project URL <small>optional</small></span><input id="projectUrl" type="url" maxlength="500" placeholder="https://github.com/owner/project"></label>
           </div>
           <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Choose log files">
             <input id="fileInput" type="file" multiple accept=".log,.txt,.crash,.json,.yaml,.yml,.md,.xml,.ini,.cfg,.csv,.trace,.stacktrace,.out,.err" hidden>
@@ -63,7 +64,7 @@
             <div class="redaction-box"><div class="redaction-head"><span>✳ <span data-i18n="redactionTitle">Privacy scan</span></span><b id="redactionCount">0</b></div><p id="redactionText" data-i18n="redactionEmpty">Add logs to see what will be masked.</p></div>
             <details class="sanitized-details"><summary><span data-i18n="sanitizedPreview">Preview cleaned log text</span><span>⌄</span></summary><pre id="sanitizedPreview"></pre></details>
           </div>
-          <div class="export-area"><button class="export-button" id="exportZip" type="button" disabled><span>↓</span> <span data-i18n="downloadBundle">Download bug bundle</span><span class="button-arrow">↗</span></button><button class="markdown-button" id="exportMarkdown" type="button" disabled><span data-i18n="markdownOnly">Markdown report only</span> <span>↗</span></button><p data-i18n="exportFootnote">ZIP includes the report and cleaned log copies. Review everything before posting.</p></div>
+          <div class="export-area"><button class="export-button" id="exportZip" type="button" disabled><span>↓</span> <span data-i18n="downloadBundle">Download bug bundle</span><span class="button-arrow">↗</span></button><button class="markdown-button" id="exportIssuePack" type="button" disabled>Prepare GitHub Issue pack ↗</button><button class="markdown-button" id="exportMarkdown" type="button" disabled><span data-i18n="markdownOnly">Markdown report only</span> <span>↗</span></button><p data-i18n="exportFootnote">ZIP includes the report and cleaned log copies. Review everything before posting.</p></div>
         </aside>
       </div>
     </section>
