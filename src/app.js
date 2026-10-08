@@ -1,4 +1,4 @@
-import { buildIssuePack, buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, suggestChecks, GAMES } from './core.js';
+import { buildIssuePack, buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, suggestChecks, GAMES } from './core.js?v=4';
 
 const MAX_TOTAL = 25 * 1024 * 1024;
 const MAX_FILE = 8 * 1024 * 1024;
