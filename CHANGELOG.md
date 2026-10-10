@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.3 — 2026-10-11
+
+- Add GitHub Funding metadata with verified Buy Me a Coffee and Gumroad links.
+
 ## v1.0.2
 
 - Add README badges (CI, version, license) and a Support / Pro Version section with donate + contact links.
