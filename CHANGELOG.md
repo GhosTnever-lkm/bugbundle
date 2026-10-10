@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.2
+
+- Add README badges (CI, version, license) and a Support / Pro Version section with donate + contact links.
+- Add `.gitignore` for Node and OS artifacts.
+
 ## v1.0.1
 
 - Restore the GitHub Issue pack download action.

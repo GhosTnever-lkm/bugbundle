@@ -10,7 +10,7 @@
 
 **Download for offline use:** [BugBundle v1.0.1 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.1/BugBundle-v1.0.1.zip). Extract it and open `index.html`.
 
-![CI](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml/badge.svg)](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml) · [![Version](https://img.shields.io/github/v/release/GhosTnever-lkm/bugbundle?sort=semver)](https://github.com/GhosTnever-lkm/bugbundle/releases) · ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 Or open `index.html` in a recent browser, or serve this directory with any static web server. There is no build step, package install, server API, or account. The example works without selecting a file.
 
@@ -44,6 +44,25 @@ The app uses native browser JavaScript modules and has no runtime dependencies. 
 BugBundle собирает текстовые логи, версии, список модов и шаги воспроизведения в Markdown-отчёт или ZIP. Файлы обрабатываются только в браузере. Программа не отправляет логи и не определяет настоящую причину сбоя. Проверка личных данных основана на шаблонах и не гарантирует, что найдёт каждую чувствительную строку. Перед публикацией проверь предпросмотр и скачанный пакет самостоятельно.
 
 Интерфейс принимает до 8 МБ на файл и до 25 МБ файлов всего. Двоичные дампы памяти не поддерживаются. Подсказки по сигнатурам ошибок — ориентир для дальнейшей проверки, а не подтверждённый диагноз.
+
+## ☕ Support / Pro Version
+
+BugBundle is free and open source. There is no paid Pro edition yet. If the tool is useful, support its development on [Buy Me a Coffee](https://buymeacoffee.com/azizazimov8), [Boosty](https://boosty.to/azizazimov), or [GitHub Sponsors](https://github.com/sponsors/GhosTnever-lkm).
+
+You can also send a supported asset to one of these public receive addresses:
+
+| Network | Asset standard | Address |
+|---|---|---|
+| Bitcoin | BTC | `bc1qn75pj4n7gyl2k5kf2f97elvyenz52q6nn2g30u` |
+| Tron | TRC-20 | `TCBSy38X57hA6w2onJcxom24x1febc1mP1` |
+| BNB Smart Chain | BEP-20 | `0xD431a917961E0b086B96D9F72b5C8fF19b19068a` |
+
+**Send funds only on the matching network.** Do not send a different network's asset to these addresses.
+
+## Contact
+
+- GitHub: [GhosTnever-lkm](https://github.com/GhosTnever-lkm)
+- Email: <azizazimov038l@gmail.com>
 
 ## License
 
