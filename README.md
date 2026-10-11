@@ -29,7 +29,7 @@ Or open `index.html` in a recent browser, or serve this directory with any stati
 
 All processing is client-side. The app contains no analytics, external fonts, or third-party scripts. It does not send files to the GitHub Pages host or to an AI service. GitHub Pages serves only the static app files when you open the hosted version.
 
-Redaction is pattern-based and cannot guarantee that all sensitive information is found. Check the preview and downloaded bundle yourself. Selected `.dmp` and other binary crash dumps are intentionally not accepted as text logs. Large log sets beyond the limits are rejected. The hints are common-pattern matches, can be wrong, and cannot confirm a cause. Mod formats, game logs, and loader versions vary. Do not use the output as proof that a file is safe or as a substitute for a game's own support instructions.
+Redaction is pattern-based: it removes credentials embedded in HTTP URLs and cannot guarantee that all other sensitive information is found. Check the preview and downloaded bundle yourself. Selected `.dmp` and other binary crash dumps are intentionally not accepted as text logs. Large log sets beyond the limits are rejected. The hints are common-pattern matches, can be wrong, and cannot confirm a cause. Mod formats, game logs, and loader versions vary. Do not use the output as proof that a file is safe or as a substitute for a game's own support instructions.
 
 The GitHub Issue pack is an offline handoff ZIP; it does not publish an issue or contact GitHub. Credentials are removed and recognized secret query parameters are masked in project links. Review the Markdown, project link, and every cleaned log before attaching the files to an issue.
 

@@ -28,6 +28,14 @@ test('redacts webhook URLs and JSON-style apiKey assignments', () => {
   assert.equal(result.counts['Credential assignment'], 2);
 });
 
+test('redacts credentials embedded in HTTP URLs', () => {
+  const result = redact('Log endpoint: https://user:pass@example.test/private/path?ref=main');
+  assert.equal(result.text, 'Log endpoint: https://example.test/private/path?ref=main');
+  assert.equal(result.counts['URL credentials'], 1);
+  assert.doesNotMatch(result.text, /user|pass/);
+  assert.match(result.text, /\/private\/path/);
+});
+
 test('redacts a private key as one block', () => {
   const input = '-----BEGIN PRIVATE KEY-----\nexample-secret-material\n-----END PRIVATE KEY-----';
   const result = redact(input);

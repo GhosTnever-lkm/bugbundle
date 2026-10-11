@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.5 — 2026-10-11
+
+- Remove HTTP URL user-info credentials during log redaction while preserving the public URL.
+- Add regression coverage for credentials embedded in diagnostic log URLs.
+
+
 ## v1.0.4 — 2026-10-11
 
 - Remove URL credentials and redact recognized secret query/fragment parameters from exported project context.

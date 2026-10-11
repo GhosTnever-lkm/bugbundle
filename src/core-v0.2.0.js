@@ -56,6 +56,7 @@ export function redact(text, options = {}) {
     countReplace(name, pattern, (...args) => name === 'Authorization token' ? `${args[1]}[REDACTED]` : '[REDACTED]');
   }
   countReplace(RULES[7][0], RULES[7][1], (...args) => `${args[1]}${args[2]}[REDACTED]`);
+  countReplace('URL credentials', /\b(https?:\/\/)[^/\s:@]+(?::[^/\s@]*)?@(?=[^/\s]+)/gi, args => args[1]);
 
   if (options.paths !== false) {
     countReplace('Windows user path', /([A-Za-z]:\\Users\\)[^\\/\s"']+/gi, () => '[USER]');
