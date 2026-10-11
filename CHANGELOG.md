@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.10 — 2026-10-11
+
+- Make bidi, control, and Unicode line-separator characters visible in sanitized filenames so uploaded-file labels cannot visually spoof their extensions.
+- Preserve the visible escapes consistently in UI labels, report references, and ZIP filenames.
+- Add regression coverage for bidi, newline, and C1 control characters.
+
 ## v1.0.9 — 2026-10-11
 
 - Fix uploaded logs crashing automatic game detection by storing the text field consumed by report analysis.

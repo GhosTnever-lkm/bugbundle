@@ -115,7 +115,7 @@ export function suggestChecks(text) {
 }
 
 export function safeFilename(name, fallback = 'log.txt') {
-  const base = redact(String(name).split(/[\\/]/).at(-1)).text.replace(/[\u0000-\u001f]/g, '').replace(/[<>:"|?*]/g, '_').trim();
+  const base = escapeInvisibleControls(redact(String(name).split(/[\\/]/).at(-1)).text, false).replace(/[<>:"|?*]/g, '_').trim();
   return base && base !== '.' && base !== '..' ? base.slice(0, 120) : fallback;
 }
 
@@ -151,10 +151,10 @@ function escapeMd(value) {
   return output.trim();
 }
 
-function escapeInvisibleControls(value) {
+function escapeInvisibleControls(value, preserveLineBreaks = true) {
   let output = '';
   for (const character of String(value ?? '')) {
-    if (character === '\n') {
+    if (character === '\n' && preserveLineBreaks) {
       output += character;
       continue;
     }

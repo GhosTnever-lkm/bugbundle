@@ -89,6 +89,12 @@ test('safe filenames remove path traversal and personal data', () => {
   assert.equal(safeFilename('folder\\crash<1>.txt'), 'crash_1_.txt');
 });
 
+test('safe filenames visibly escape bidirectional and control characters', () => {
+  const name = safeFilename('crash\u202Egpj.txt\nlog\u0085');
+  assert.equal(name, 'crash\\u{202E}gpj.txt\\u{A}log\\u{85}');
+  assert.doesNotMatch(name, /[\u0000-\u001F\u007F-\u009F\u202A-\u202E\u2066-\u2069]/);
+});
+
 test('report redacts user fields and prevents Markdown structure injection', () => {
   const report = buildReport({
     title: 'Issue | <script>unsafe()</script>\n## Forged heading **bold** [click](https://evil.invalid)',
