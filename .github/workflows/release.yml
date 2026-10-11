@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check version and run tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          test "$GITHUB_REF_NAME" = "v$VERSION"
+          npm test
+      - name: Build and verify offline archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          STAGING="$RUNNER_TEMP/BugBundle-v$VERSION"
+          ARCHIVE="$RUNNER_TEMP/BugBundle-v$VERSION.zip"
+          mkdir -p "$STAGING"
+          git archive "$GITHUB_SHA" | tar -x -C "$STAGING"
+          (cd "$STAGING" && npm test)
+          test -f "$STAGING/index.html"
+          (cd "$RUNNER_TEMP" && zip -qr "$ARCHIVE" "BugBundle-v$VERSION")
+          unzip -t "$ARCHIVE"
+          (cd "$RUNNER_TEMP" && sha256sum "$(basename "$ARCHIVE")" > "$(basename "$ARCHIVE").sha256")
+          (cd "$RUNNER_TEMP" && sha256sum --check "$(basename "$ARCHIVE").sha256")
+          printf 'ARCHIVE=%s\nCHECKSUM=%s\nVERSION=%s\n' "$ARCHIVE" "$ARCHIVE.sha256" "$VERSION" >> "$GITHUB_ENV"
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "$ARCHIVE" "$CHECKSUM" \
+            --title "BugBundle $VERSION" \
+            --notes "Offline ZIP with verified source, browser app, and passing core tests. Verify the attached SHA-256 sidecar before use."

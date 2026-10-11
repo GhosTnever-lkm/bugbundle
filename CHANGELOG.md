@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.7 — 2026-10-11
+
+- Escape Markdown syntax, multiline breaks, and invisible Unicode controls in user-provided report fields and extracted evidence.
+- Keep evidence filenames outside inline code spans so untrusted backticks cannot break report formatting.
+- Add regressions for forged headings, links, emphasis, and bidirectional control characters.
+- Publish a checksum-verified offline ZIP from the release workflow after tests and archive smoke checks.
+
 ## v1.0.6 — 2026-10-11
 
 - Hide the empty preview state after loading a report so it does not overlap the live summary.

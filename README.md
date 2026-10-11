@@ -8,7 +8,7 @@
 
 **Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
 
-**Download for offline use:** [BugBundle v1.0.6 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.6/BugBundle-v1.0.6.zip). Extract it and open `index.html`.
+**Download for offline use:** [BugBundle v1.0.7 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.7/BugBundle-v1.0.7.zip). Extract it and open `index.html`.
 
 ![BugBundle report builder with a redaction preview for a synthetic Minecraft crash log](docs/bugbundle-preview.png)
 

@@ -119,8 +119,35 @@ export function safeFilename(name, fallback = 'log.txt') {
   return base && base !== '.' && base !== '..' ? base.slice(0, 120) : fallback;
 }
 
+const MARKDOWN_PUNCTUATION = new Set('!"#$%&\'()*+,-./:;=?@[\\]^_`{|}~');
+
 function escapeMd(value) {
-  return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('|', '\\|').replaceAll('`', '\\`').trim();
+  let output = '';
+  for (const character of String(value ?? '')) {
+    const codePoint = character.codePointAt(0);
+    if (character === '\n') {
+      output += '\\\\n';
+      continue;
+    }
+    if (character === '\r') {
+      output += '\\\\r';
+      continue;
+    }
+    if (character === '\t') {
+      output += '\\\\t';
+      continue;
+    }
+    if (/[\p{Cc}\p{Cf}\p{Cs}\p{Co}\p{Cn}]/u.test(character)) {
+      output += `\\\\u{${codePoint.toString(16).toUpperCase()}}`;
+      continue;
+    }
+    if (character === '&') output += '&amp;';
+    else if (character === '<') output += '&lt;';
+    else if (character === '>') output += '&gt;';
+    else if (MARKDOWN_PUNCTUATION.has(character)) output += `\\${character}`;
+    else output += character;
+  }
+  return output.trim();
 }
 
 export function buildReport(data, files, details) {
@@ -142,7 +169,7 @@ export function buildReport(data, files, details) {
     '## Extracted log evidence', '',
   ];
   if (!details.evidence.length) lines.push('No common error markers were detected. The sanitized logs are attached below.');
-  else for (const item of details.evidence) lines.push(`- \`${escapeMd(item.file)}:${item.line}\` — ${escapeMd(clean(item.text))}`);
+  else for (const item of details.evidence) lines.push(`- ${escapeMd(item.file)} (line ${item.line}) — ${escapeMd(clean(item.text))}`);
   lines.push('', '## Privacy', '', 'This bundle was assembled in the browser. Secret-like values, selected personal paths, and selected contact details were masked before export. Review the attached sanitized logs before sharing.', '');
   return lines.join('\n');
 }

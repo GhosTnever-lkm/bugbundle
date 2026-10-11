@@ -83,15 +83,32 @@ test('safe filenames remove path traversal and personal data', () => {
 
 test('report redacts user fields and prevents Markdown structure injection', () => {
   const report = buildReport({
-    title: 'Issue | <script>password=secret123</script>',
+    title: 'Issue | <script>unsafe()</script>\n## Forged heading **bold** [click](https://evil.invalid)',
     platform: 'C:\\Users\\Alice\\PC',
     mods: 'alpha\n```\n# Forged section',
     expected: 'Contact me at alice@example.com',
-  }, [], { gameLabel: 'Minecraft', versions: [], evidence: [], loader: '', });
-  assert.doesNotMatch(report, /secret123|Alice|alice@example\.com|```\n# Forged section/);
+  }, [], { gameLabel: 'Minecraft', versions: [], evidence: [], loader: '' });
+  assert.doesNotMatch(report, /Alice|alice@example\.com|```\n# Forged section/);
   assert.match(report, /Issue \\| &lt;script&gt;/);
+  assert.ok(report.includes(String.raw`\\n\#\# Forged heading \*\*bold\*\* \[click\]\(https\:\/\/evil\.invalid\)`));
+  assert.doesNotMatch(report, /\n## Forged heading/);
   assert.doesNotMatch(report, /<script>/, 'raw HTML tags must not reach the report');
   assert.match(report, /Not provided/);
+});
+
+test('report visibly escapes bidi controls and multiline log evidence', () => {
+  const report = buildReport({ title: 'Crash\u202Etxt', expected: 'first line\n## Injected heading' }, [], {
+    gameLabel: 'Minecraft',
+    versions: [],
+    evidence: [{ file: 'latest\u202Elog\n## fake.md', line: 8, text: 'ERROR: failed\n**forged emphasis**' }],
+    loader: '',
+  });
+  assert.ok(report.includes(String.raw`Crash\\u{202E}txt`));
+  assert.ok(report.includes(String.raw`first line\\n\#\# Injected heading`));
+  assert.ok(report.includes(String.raw`latest\\u{202E}log\\n\#\# fake\.md (line 8)`));
+  assert.ok(report.includes(String.raw`failed\\n\*\*forged emphasis\*\*`));
+  assert.doesNotMatch(report, /[\u202A-\u202E\u2066-\u2069]/);
+  assert.doesNotMatch(report, /\n## (?:Injected|fake)/);
 });
 
 
