@@ -8,7 +8,9 @@
 
 **Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
 
-**Download for offline use:** [BugBundle v1.0.1 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.1/BugBundle-v1.0.1.zip). Extract it and open `index.html`.
+**Download for offline use:** [BugBundle v1.0.6 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.6/BugBundle-v1.0.6.zip). Extract it and open `index.html`.
+
+![BugBundle report builder with a redaction preview for a synthetic Minecraft crash log](docs/bugbundle-preview.png)
 
 [![CI](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml/badge.svg)](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml) · [![Version](https://img.shields.io/github/v/release/GhosTnever-lkm/bugbundle?sort=semver)](https://github.com/GhosTnever-lkm/bugbundle/releases) · ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 

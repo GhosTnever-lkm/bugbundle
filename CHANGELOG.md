@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.6 — 2026-10-11
+
+- Hide the empty preview state after loading a report so it does not overlap the live summary.
+- Add a current interface screenshot and refresh the offline bundle instructions.
+
+
 ## v1.0.5 — 2026-10-11
 
 - Remove HTTP URL user-info credentials during log redaction while preserving the public URL.
