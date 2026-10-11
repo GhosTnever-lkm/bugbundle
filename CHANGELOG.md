@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.8 — 2026-10-11
+
+- Visibly escape invisible Unicode, control characters, and line separators in the mod-list portion of reports while preserving ordinary line breaks.
+- Add a regression covering bidirectional text, tabs, carriage returns, and ANSI control characters.
+
 ## v1.0.7 — 2026-10-11
 
 - Escape Markdown syntax, multiline breaks, and invisible Unicode controls in user-provided report fields and extracted evidence.

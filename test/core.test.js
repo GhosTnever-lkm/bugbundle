@@ -111,6 +111,17 @@ test('report visibly escapes bidi controls and multiline log evidence', () => {
   assert.doesNotMatch(report, /\n## (?:Injected|fake)/);
 });
 
+test('mod list preserves line breaks but visibly escapes invisible controls', () => {
+  const report = buildReport({ title: 'Mod list', mods: 'alpha\u202Etxt\nbeta\tmods\r\nx\u001b[31m' }, [], {
+    gameLabel: 'Minecraft',
+    versions: [],
+    evidence: [],
+    loader: '',
+  });
+  assert.ok(report.includes('alpha\\u{202E}txt\nbeta\\u{9}mods\\u{D}\nx\\u{1B}[31m'));
+  assert.doesNotMatch(report, /[\u0000-\u0008\u000B-\u001F\u202A-\u202E\u2066-\u2069]/);
+});
+
 
 test('project URLs remove embedded credentials and redact secret parameters', () => {
   const safe = safeProjectUrl('https://alice:pass@example.test/mod?access_token=private123&X-Amz-Credential=cloud-secret&author=Aziz&ref=readme#callback?access_token=fragment-secret');

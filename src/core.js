@@ -120,6 +120,7 @@ export function safeFilename(name, fallback = 'log.txt') {
 }
 
 const MARKDOWN_PUNCTUATION = new Set('!"#$%&\'()*+,-./:;=?@[\\]^_`{|}~');
+const INVISIBLE_OR_CONTROL = /[\p{Cc}\p{Cf}\p{Cs}\p{Co}\p{Cn}\p{Zl}\p{Zp}]/u;
 
 function escapeMd(value) {
   let output = '';
@@ -137,7 +138,7 @@ function escapeMd(value) {
       output += '\\\\t';
       continue;
     }
-    if (/[\p{Cc}\p{Cf}\p{Cs}\p{Co}\p{Cn}]/u.test(character)) {
+    if (INVISIBLE_OR_CONTROL.test(character)) {
       output += `\\\\u{${codePoint.toString(16).toUpperCase()}}`;
       continue;
     }
@@ -150,9 +151,25 @@ function escapeMd(value) {
   return output.trim();
 }
 
+function escapeInvisibleControls(value) {
+  let output = '';
+  for (const character of String(value ?? '')) {
+    if (character === '\n') {
+      output += character;
+      continue;
+    }
+    if (INVISIBLE_OR_CONTROL.test(character)) {
+      output += `\\u{${character.codePointAt(0).toString(16).toUpperCase()}}`;
+      continue;
+    }
+    output += character;
+  }
+  return output;
+}
+
 export function buildReport(data, files, details) {
   const clean = value => redact(String(value ?? '')).text;
-  const safeMods = clean(data.mods || 'Not provided').replaceAll('```', '`\u200b``');
+  const safeMods = escapeInvisibleControls(clean(data.mods || 'Not provided')).replaceAll('```', '`\u200b``');
   const lines = [
     `# ${escapeMd(clean(data.title || 'Game or mod issue'))}`,
     '',
