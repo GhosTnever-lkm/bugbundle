@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.9 — 2026-10-11
+
+- Fix uploaded logs crashing automatic game detection by storing the text field consumed by report analysis.
+- Load the tested canonical core module in the browser app instead of an outdated duplicate.
+- Add a regression ensuring app and tests use the same core module; bump the app script URL to refresh cached clients.
+
 ## v1.0.8 — 2026-10-11
 
 - Visibly escape invisible Unicode, control characters, and line separators in the mod-list portion of reports while preserving ordinary line breaks.

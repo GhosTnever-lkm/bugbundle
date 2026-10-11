@@ -1,7 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { inflateRawSync } from 'node:zlib';
 import { buildIssuePack, buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, safeProjectUrl, suggestChecks } from '../src/core.js';
+
+test('browser app uses this core module and stores uploaded text for analysis', async () => {
+  const appSource = await readFile(new URL('../src/app.js', import.meta.url), 'utf8');
+  assert.match(appSource, /from '\.\/core\.js'/);
+  assert.doesNotMatch(appSource, /core-v\d/);
+  assert.match(appSource, /state\.files\.push\(\{[^}]*\btext,/);
+});
 
 function detectGameFromFiles(files) {
   return detectGame(files.map(file => ({ name: file.name, text: file.text })));
