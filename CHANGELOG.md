@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.4 — 2026-10-11
+
+- Remove URL credentials and redact recognized secret query/fragment parameters from exported project context.
+- Test that ordinary URL parameters such as `author` remain intact.
+
+
 ## v1.0.3 — 2026-10-11
 
 - Add GitHub Funding metadata with verified Buy Me a Coffee and Gumroad links.

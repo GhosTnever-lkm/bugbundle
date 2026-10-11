@@ -31,7 +31,7 @@ All processing is client-side. The app contains no analytics, external fonts, or
 
 Redaction is pattern-based and cannot guarantee that all sensitive information is found. Check the preview and downloaded bundle yourself. Selected `.dmp` and other binary crash dumps are intentionally not accepted as text logs. Large log sets beyond the limits are rejected. The hints are common-pattern matches, can be wrong, and cannot confirm a cause. Mod formats, game logs, and loader versions vary. Do not use the output as proof that a file is safe or as a substitute for a game's own support instructions.
 
-The GitHub Issue pack is an offline handoff ZIP; it does not publish an issue or contact GitHub. Review the Markdown, project link, and every cleaned log before attaching the files to an issue.
+The GitHub Issue pack is an offline handoff ZIP; it does not publish an issue or contact GitHub. Credentials are removed and recognized secret query parameters are masked in project links. Review the Markdown, project link, and every cleaned log before attaching the files to an issue.
 
 ## Development
 

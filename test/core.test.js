@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { inflateRawSync } from 'node:zlib';
-import { buildIssuePack, buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, suggestChecks } from '../src/core.js';
+import { buildIssuePack, buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, safeProjectUrl, suggestChecks } from '../src/core.js';
 
 function detectGameFromFiles(files) {
   return detectGame(files.map(file => ({ name: file.name, text: file.text })));
@@ -84,6 +84,33 @@ test('report redacts user fields and prevents Markdown structure injection', () 
   assert.match(report, /Issue \\| &lt;script&gt;/);
   assert.doesNotMatch(report, /<script>/, 'raw HTML tags must not reach the report');
   assert.match(report, /Not provided/);
+});
+
+
+test('project URLs remove embedded credentials and redact secret parameters', () => {
+  const safe = safeProjectUrl('https://alice:pass@example.test/mod?access_token=private123&X-Amz-Credential=cloud-secret&author=Aziz&ref=readme#callback?access_token=fragment-secret');
+  const parsed = new URL(safe);
+  assert.equal(parsed.username, '');
+  assert.equal(parsed.password, '');
+  assert.equal(parsed.searchParams.get('access_token'), '[REDACTED]');
+  assert.equal(parsed.searchParams.get('X-Amz-Credential'), '[REDACTED]');
+  assert.equal(parsed.searchParams.get('ref'), 'readme');
+  assert.equal(parsed.searchParams.get('author'), 'Aziz');
+  assert.equal(parsed.hash, '');
+  assert.doesNotMatch(safe, /alice|pass|private123|fragment-secret|cloud-secret/);
+  assert.equal(safeProjectUrl('javascript:alert(1)'), '');
+});
+
+test('Issue ZIP never keeps URL credentials or query secrets', () => {
+  const entries = buildIssuePack({
+    report: '# Report',
+    project: { url: 'https://user:pass@example.test/mod?token=private123&branch=main' },
+  });
+  const context = JSON.parse(entries.find(entry => entry.name === 'project-context.json').data);
+  assert.doesNotMatch(context.url, /user|pass|private123/);
+  const parsed = new URL(context.url);
+  assert.equal(parsed.searchParams.get('token'), '[REDACTED]');
+  assert.equal(parsed.searchParams.get('branch'), 'main');
 });
 
 test('issue pack includes privacy-clean project context and optional clean logs', () => {

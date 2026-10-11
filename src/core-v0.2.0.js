@@ -146,6 +146,37 @@ export function buildReport(data, files, details) {
   return lines.join('\n');
 }
 
+const SENSITIVE_URL_KEYS = new Set([
+  'token', 'accesstoken', 'refreshtoken', 'idtoken', 'oauthtoken', 'secret', 'clientsecret',
+  'password', 'passwd', 'apikey', 'accesskey', 'authorization', 'auth', 'credential',
+  'signature', 'xamzsignature', 'xamzcredential', 'xamzsecuritytoken', 'xgoogsignature', 'xgoogcredential', 'sig', 'session', 'jwt', 'code', 'state', 'key', 'authkey', 'secretkey', 'privatekey',
+]);
+
+function isSensitiveUrlKey(key) {
+  return SENSITIVE_URL_KEYS.has(String(key).toLowerCase().replace(/[-_]/g, ''));
+}
+
+export function safeProjectUrl(value) {
+  const raw = String(value || '').trim().slice(0, 2000);
+  if (!raw) return '';
+  try {
+    const url = new URL(raw);
+    if (!['http:', 'https:'].includes(url.protocol)) return '';
+    url.username = '';
+    url.password = '';
+    for (const key of [...url.searchParams.keys()]) {
+      if (isSensitiveUrlKey(key)) url.searchParams.set(key, '[REDACTED]');
+    }
+    const fragment = url.hash.slice(1);
+    const fragmentQuery = fragment.includes('?') ? fragment.slice(fragment.indexOf('?') + 1) : fragment;
+    const fragmentParams = new URLSearchParams(fragmentQuery.replace(/^\?/, ''));
+    if ([...fragmentParams.keys()].some(isSensitiveUrlKey)) url.hash = '';
+    return url.toString();
+  } catch {
+    return '';
+  }
+}
+
 export function buildIssuePack({ report, files = [], project = {}, includeCleanLogs = true }) {
   const text = typeof report === 'string' ? report : String(report?.reportText ?? '');
   if (!text.trim()) throw new Error('A non-empty report is required.');
@@ -153,7 +184,7 @@ export function buildIssuePack({ report, files = [], project = {}, includeCleanL
   if (project && (project.name || project.url || project.version || project.platform)) {
     const safeProject = {
       name: redact(String(project.name || '')).text.slice(0, 120),
-      url: String(project.url || '').slice(0, 500),
+      url: safeProjectUrl(project.url),
       version: redact(String(project.version || '')).text.slice(0, 100),
       platform: redact(String(project.platform || '')).text.slice(0, 80),
     };
