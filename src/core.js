@@ -119,6 +119,27 @@ export function safeFilename(name, fallback = 'log.txt') {
   return base && base !== '.' && base !== '..' ? base.slice(0, 120) : fallback;
 }
 
+export function uniqueSafeFilename(name, existingNames = []) {
+  const safe = safeFilename(name);
+  const used = new Set(existingNames.map(value => safeFilename(value).toLocaleLowerCase('en-US')));
+  if (!used.has(safe.toLocaleLowerCase('en-US'))) return safe;
+  const extensionAt = safe.lastIndexOf('.');
+  const hasExtension = extensionAt > 0;
+  const stem = hasExtension ? safe.slice(0, extensionAt) : safe;
+  const extension = hasExtension ? safe.slice(extensionAt) : '';
+  let index = 2;
+  let candidate;
+  do { candidate = `${stem} (${index++})${extension}`; }
+  while (used.has(candidate.toLocaleLowerCase('en-US')));
+  return candidate;
+}
+
+export function isDuplicateLog(files, incoming) {
+  const sourceName = safeFilename(incoming.sourceName || incoming.name).toLocaleLowerCase('en-US');
+  return files.some(file => safeFilename(file.sourceName || file.name).toLocaleLowerCase('en-US') === sourceName
+    && file.size === incoming.size && file.text === incoming.text);
+}
+
 const MARKDOWN_PUNCTUATION = new Set('!"#$%&\'()*+,-./:;=?@[\\]^_`{|}~');
 const INVISIBLE_OR_CONTROL = /[\p{Cc}\p{Cf}\p{Cs}\p{Co}\p{Cn}\p{Zl}\p{Zp}]/u;
 
@@ -267,10 +288,13 @@ export function createZip(entries) {
   const encoder = new TextEncoder();
   const locals = [];
   const central = [];
+  const usedNames = new Set();
   let offset = 0;
   let totalSize = 0;
   for (const entry of entries) {
-    const name = encoder.encode(safeFilename(entry.name));
+    const safeName = uniqueSafeFilename(entry.name, [...usedNames]);
+    usedNames.add(safeName);
+    const name = encoder.encode(safeName);
     if (name.length > 0xffff) throw new Error('A ZIP filename is too long.');
     const data = entry.data instanceof Uint8Array ? entry.data : encoder.encode(String(entry.data));
     if (data.length > 0xffffffff) throw new Error('A ZIP entry is too large for ZIP32.');

@@ -8,7 +8,7 @@
 
 **Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
 
-**Download for offline use:** [BugBundle v1.0.10 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.10/BugBundle-v1.0.10.zip). Extract it and open `index.html`.
+**Download for offline use:** [BugBundle v1.0.11 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.11/BugBundle-v1.0.11.zip). Extract it and open `index.html`.
 
 ![BugBundle report builder with a redaction preview for a synthetic Minecraft crash log](docs/bugbundle-preview.png)
 
@@ -25,6 +25,7 @@ Or open `index.html` in a recent browser, or serve this directory with any stati
 - Shows the cleaned log preview and a count of replaced items before export.
 - Produces `bug-report.md` or a ZIP containing that report and sanitized copies of the selected text files.
 - Produces a GitHub Issue handoff ZIP with a cleaned project context, report, and optional cleaned logs.
+- Keeps distinct logs with the same filename by adding a readable number to the exported copy, so ZIP entries do not overwrite one another.
 - Includes English and Russian interfaces.
 
 ## Privacy and limitations

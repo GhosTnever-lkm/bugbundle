@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.11 — 2026-10-13
+
+- Keep distinct uploaded logs even when their sanitized names and sizes match; exact duplicate content is still skipped.
+- Give repeated archive filenames a readable numeric suffix, including case-only collisions, instead of emitting ambiguous ZIP entries.
+- Add regressions for unique filename generation and preservation of every log's contents in exported ZIPs.
+
 ## v1.0.10 — 2026-10-11
 
 - Make bidi, control, and Unicode line-separator characters visible in sanitized filenames so uploaded-file labels cannot visually spoof their extensions.
