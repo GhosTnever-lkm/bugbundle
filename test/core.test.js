@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { inflateRawSync } from 'node:zlib';
-import { buildIssuePack, buildReport, createZip, detectGame, extractEvidence, extractVersions, redact, safeFilename, safeProjectUrl, suggestChecks } from '../src/core.js';
+import { buildIssuePack, buildReport, createZip, detectGame, extractEvidence, extractVersions, isDuplicateLog, redact, safeFilename, safeProjectUrl, suggestChecks, uniqueSafeFilename } from '../src/core.js';
 
 test('browser app uses this core module and stores uploaded text for analysis', async () => {
   const appSource = await readFile(new URL('../src/app.js', import.meta.url), 'utf8');
@@ -93,6 +93,19 @@ test('safe filenames visibly escape bidirectional and control characters', () =>
   const name = safeFilename('crash\u202Egpj.txt\nlog\u0085');
   assert.equal(name, 'crash\\u{202E}gpj.txt\\u{A}log\\u{85}');
   assert.doesNotMatch(name, /[\u0000-\u001F\u007F-\u009F\u202A-\u202E\u2066-\u2069]/);
+});
+
+test('unique safe filenames keep duplicate basenames distinct, ignoring case', () => {
+  assert.equal(uniqueSafeFilename('logs/crash.log', ['crash.log']), 'crash (2).log');
+  assert.equal(uniqueSafeFilename('CRASH.LOG', ['crash.log', 'crash (2).log']), 'CRASH (3).LOG');
+  assert.equal(uniqueSafeFilename('other.txt', ['crash.log']), 'other.txt');
+});
+
+test('log import deduplicates exact copies but keeps different same-size files', () => {
+  const existing = [{ name: 'latest.log', sourceName: 'latest.log', size: 4, text: 'first' }];
+  assert.equal(isDuplicateLog(existing, { sourceName: 'latest.log', size: 4, text: 'first' }), true);
+  assert.equal(isDuplicateLog(existing, { sourceName: 'latest.log', size: 4, text: 'else' }), false);
+  assert.equal(isDuplicateLog(existing, { sourceName: 'other.log', size: 4, text: 'first' }), false);
 });
 
 test('report redacts user fields and prevents Markdown structure injection', () => {
@@ -203,6 +216,30 @@ test('ZIP output contains safe filenames and readable entries', async () => {
   assert.equal(contents[0].toString(), '# Report\nhello');
   assert.deepEqual([...contents[1]], [0, 1, 2, 255]);
   assert.equal(bytes.readUInt32LE(offset), 0x02014b50);
+});
+
+test('ZIP output preserves duplicate basenames as separate entries', async () => {
+  const blob = createZip([
+    { name: 'logs/latest.log', data: 'first log' },
+    { name: 'other/latest.log', data: 'second log' },
+    { name: 'third/LATEST.LOG', data: 'third log' },
+  ]);
+  const bytes = Buffer.from(await blob.arrayBuffer());
+  const names = [];
+  const contents = [];
+  let offset = 0;
+  while (bytes.readUInt32LE(offset) === 0x04034b50) {
+    const size = bytes.readUInt32LE(offset + 18);
+    const nameLength = bytes.readUInt16LE(offset + 26);
+    const extraLength = bytes.readUInt16LE(offset + 28);
+    const name = new TextDecoder().decode(bytes.subarray(offset + 30, offset + 30 + nameLength));
+    const start = offset + 30 + nameLength + extraLength;
+    names.push(name);
+    contents.push(bytes.subarray(start, start + size).toString());
+    offset = start + size;
+  }
+  assert.deepEqual(names, ['latest.log', 'latest (2).log', 'LATEST (3).LOG']);
+  assert.deepEqual(contents, ['first log', 'second log', 'third log']);
 });
 
 test('ZIP32 writer rejects more than 500 files', () => {

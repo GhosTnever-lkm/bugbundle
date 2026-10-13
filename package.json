@@ -1,6 +1,6 @@
 {
   "name": "bugbundle",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "private": true,
   "type": "module",
   "description": "Local-first game and mod crash report builder",
