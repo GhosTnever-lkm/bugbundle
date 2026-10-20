@@ -134,6 +134,34 @@ export function uniqueSafeFilename(name, existingNames = []) {
   return candidate;
 }
 
+function safeZipPath(value) {
+  const segments = String(value ?? '').replaceAll('\\', '/').split('/');
+  const safeSegments = [];
+  for (const segment of segments) {
+    if (!segment || segment === '.' || segment === '..') continue;
+    safeSegments.push(safeFilename(segment));
+  }
+  return safeSegments.join('/') || 'log.txt';
+}
+
+function uniqueSafeZipPath(value, existingNames = []) {
+  const safe = safeZipPath(value);
+  const separator = safe.lastIndexOf('/');
+  const directory = separator >= 0 ? safe.slice(0, separator + 1) : '';
+  const filename = separator >= 0 ? safe.slice(separator + 1) : safe;
+  const used = new Set(existingNames.map(name => safeZipPath(name).toLocaleLowerCase('en-US')));
+  if (!used.has(safe.toLocaleLowerCase('en-US'))) return safe;
+  const extensionAt = filename.lastIndexOf('.');
+  const hasExtension = extensionAt > 0;
+  const stem = hasExtension ? filename.slice(0, extensionAt) : filename;
+  const extension = hasExtension ? filename.slice(extensionAt) : '';
+  let index = 2;
+  let candidate;
+  do { candidate = `${directory}${stem} (${index++})${extension}`; }
+  while (used.has(candidate.toLocaleLowerCase('en-US')));
+  return candidate;
+}
+
 export function isDuplicateLog(files, incoming) {
   const sourceName = safeFilename(incoming.sourceName || incoming.name).toLocaleLowerCase('en-US');
   return files.some(file => safeFilename(file.sourceName || file.name).toLocaleLowerCase('en-US') === sourceName
@@ -292,7 +320,7 @@ export function createZip(entries) {
   let offset = 0;
   let totalSize = 0;
   for (const entry of entries) {
-    const safeName = uniqueSafeFilename(entry.name, [...usedNames]);
+    const safeName = uniqueSafeZipPath(entry.name, [...usedNames]);
     usedNames.add(safeName);
     const name = encoder.encode(safeName);
     if (name.length > 0xffff) throw new Error('A ZIP filename is too long.');
