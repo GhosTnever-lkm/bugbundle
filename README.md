@@ -8,13 +8,13 @@
 
 **Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
 
-**Download for offline use:** [BugBundle v1.0.11 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.11/BugBundle-v1.0.11.zip). Extract it and open `index.html`.
+**Download for offline use:** [BugBundle v1.0.11 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.11/BugBundle-v1.0.11.zip). Extract it, start a static server in the extracted folder, then open `http://localhost:8000`. For example, run `python -m http.server 8000 --bind 127.0.0.1` and stop it with Ctrl+C when you are done. Keep the server bound to localhost; the app itself does not upload your files.
 
 ![BugBundle report builder with a redaction preview for a synthetic Minecraft crash log](docs/bugbundle-preview.png)
 
 [![CI](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml/badge.svg)](https://github.com/GhosTnever-lkm/bugbundle/actions/workflows/ci.yml) · [![Version](https://img.shields.io/github/v/release/GhosTnever-lkm/bugbundle?sort=semver)](https://github.com/GhosTnever-lkm/bugbundle/releases) · ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
-Or open `index.html` in a recent browser, or serve this directory with any static web server. There is no build step, package install, server API, or account. The example works without selecting a file.
+Serve this directory with any static web server and open the local HTTP address it prints. For example, from this folder run `python -m http.server 8000 --bind 127.0.0.1` and open `http://localhost:8000`. There is no build step, package install, server API, or account. The example works without selecting a file. A local HTTP server is required because browsers block JavaScript modules loaded directly from `file://` pages.
 
 ## What it does
 
@@ -42,7 +42,7 @@ The app uses native browser JavaScript modules and has no runtime dependencies. 
 
 ## Локальный запуск
 
-Открой `index.html` в современном браузере или запусти любой статический веб-сервер в этой папке. Сборка и установка пакетов не нужны. Пример отчёта работает без выбора файла.
+Запусти любой статический веб-сервер в этой папке и открой его локальный HTTP-адрес. Например, выполни `python -m http.server 8000 --bind 127.0.0.1` и перейди на `http://localhost:8000`. Просто открыть `index.html` двойным щелчком нельзя: браузеры блокируют загрузку JavaScript-модулей через `file://`. Сборка и установка пакетов не нужны. Пример отчёта работает без выбора файла.
 
 BugBundle собирает текстовые логи, версии, список модов и шаги воспроизведения в Markdown-отчёт или ZIP. Файлы обрабатываются только в браузере. Программа не отправляет логи и не определяет настоящую причину сбоя. Проверка личных данных основана на шаблонах и не гарантирует, что найдёт каждую чувствительную строку. Перед публикацией проверь предпросмотр и скачанный пакет самостоятельно.
 
