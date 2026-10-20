@@ -11,6 +11,13 @@ test('browser app uses this core module and stores uploaded text for analysis', 
   assert.match(appSource, /state\.files\.push\(\{[^}]*\btext,/);
 });
 
+test('offline instructions require HTTP for the app JavaScript modules', async () => {
+  const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+  assert.match(readme, /python -m http\.server 8000 --bind 127\.0\.0\.1/);
+  assert.match(readme, /browsers block JavaScript modules loaded directly from `file:\/\//i);
+  assert.doesNotMatch(readme, /Extract it and open `index\.html`/);
+});
+
 function detectGameFromFiles(files) {
   return detectGame(files.map(file => ({ name: file.name, text: file.text })));
 }
