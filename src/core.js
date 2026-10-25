@@ -1,7 +1,7 @@
 const RULES = [
   ['Private key', /-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/g],
   ['GitHub token', /\b(?:gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,})\b/g],
-  ['AWS access key', /\bAKIA[0-9A-Z]{16}\b/g],
+  ['AWS access key', /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g],
   ['Google API key', /\bAIza[0-9A-Za-z_-]{30,}\b/g],
   ['Slack token', /\bxox[baprs]-[0-9A-Za-z-]{20,}\b/g],
   ['Discord webhook', /https?:\/\/(?:discord(?:app)?\.com)\/api\/webhooks\/\d{17,20}\/[A-Za-z0-9._-]{20,}/gi],
@@ -70,7 +70,7 @@ export function redact(text, options = {}) {
     const octet = '(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)';
     countReplace('IPv4 address', new RegExp(`\\b${octet}(?:\\.${octet}){3}\\b`, 'g'), () => '[IP ADDRESS]');
   }
-  countReplace('Credential assignment', /["']?\b(password|passwd|api[_-]?key|access[_-]?token|client[_-]?secret|aws_secret_access_key|secret|token)\b["']?\s*([:=])\s*(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s,;"'`]+)/gi,
+  countReplace('Credential assignment', /["']?\b(password|passwd|api[_-]?key|access[_-]?token|client[_-]?secret|aws_secret_access_key|aws_session_token|secret|token)\b["']?\s*([:=])\s*(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s,;"'`]+)/gi,
     (...args) => `${args[1]}${args[2]}[REDACTED]`);
   countReplace('Discord webhook', /https?:\/\/(?:discord(?:app)?\.com)\/api\/webhooks\/\d{17,20}\/[A-Za-z0-9._-]{20,}/gi, () => '[REDACTED WEBHOOK]');
   return { text: output, counts };

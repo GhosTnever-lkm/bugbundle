@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Redact temporary AWS access keys and `aws_session_token` assignments found in logs.
+- Add regression coverage for both credential formats.
+- Refresh the browser script URL so hosted clients load the updated core.
+
 ## v1.0.11 — 2026-10-13
 
 - Keep distinct uploaded logs even when their sanitized names and sizes match; exact duplicate content is still skipped.

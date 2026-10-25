@@ -32,6 +32,15 @@ test('redacts common credentials, emails, and user profile paths', () => {
   assert.equal(result.counts['Authorization token'], 1);
 });
 
+test('redacts temporary AWS access keys and session-token assignments', () => {
+  const input = 'AWS_ACCESS_KEY_ID=ASIA1234567890ABCDEF\naws_session_token=temporary-session-secret-123';
+  const result = redact(input);
+
+  assert.doesNotMatch(result.text, /ASIA1234567890ABCDEF|temporary-session-secret-123/);
+  assert.equal(result.counts['AWS access key'], 1);
+  assert.equal(result.counts['Credential assignment'], 1);
+});
+
 test('redacts webhook URLs and JSON-style apiKey assignments', () => {
   const input = [
     'https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopQRSTUVwx',
