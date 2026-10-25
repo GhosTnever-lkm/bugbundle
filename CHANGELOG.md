@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.0.12 — 2026-10-25
 
 - Redact temporary AWS access keys and `aws_session_token` assignments found in logs.
 - Add regression coverage for both credential formats.
