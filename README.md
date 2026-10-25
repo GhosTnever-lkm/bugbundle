@@ -8,7 +8,7 @@
 
 **Use BugBundle online:** https://ghostnever-lkm.github.io/bugbundle/
 
-**Download for offline use:** [BugBundle v1.0.11 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.11/BugBundle-v1.0.11.zip). Extract it, start a static server in the extracted folder, then open `http://localhost:8000`. For example, run `python -m http.server 8000 --bind 127.0.0.1` and stop it with Ctrl+C when you are done. Keep the server bound to localhost; the app itself does not upload your files.
+**Download for offline use:** [BugBundle v1.0.12 ZIP](https://github.com/GhosTnever-lkm/bugbundle/releases/download/v1.0.12/BugBundle-v1.0.12.zip). Extract it, start a static server in the extracted folder, then open `http://localhost:8000`. For example, run `python -m http.server 8000 --bind 127.0.0.1` and stop it with Ctrl+C when you are done. Keep the server bound to localhost; the app itself does not upload your files.
 
 ![BugBundle report builder with a redaction preview for a synthetic Minecraft crash log](docs/bugbundle-preview.png)
 
